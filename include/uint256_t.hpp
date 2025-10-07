@@ -22,6 +22,35 @@
 #define SUPPORTS_UINT128_EXTENSION
 #endif
 
+// If using MSVC, define div10_u64_no128
+#if defined(_MSC_VER)
+#include <intrin.h>
+#endif
+
+// Portable long division by 10 (used for insertion to ostream)
+constexpr uint64_t TEN_64_BIT = 10ULL;
+constexpr uint64_t ONE_64_BIT = 1ULL;
+static inline uint64_t div10_u64_no128(uint64_t part, uint32_t& remainder) {
+#if defined(_MSC_VER) && defined(_M_X64)
+    uint64_t tmpRemainder = remainder;
+    uint64_t quotient = _udiv128(tmpRemainder, part, TEN_64_BIT, &tmpRemainder);
+    remainder = static_cast<uint32_t>(tmpRemainder);
+    return quotient;
+#else
+    uint64_t quotient = 0;
+    uint64_t tmpRemainder = remainder;
+    for (int bit = 63; bit >= 0; --bit) {
+        tmpRemainder = (tmpRemainder << 1) | ((part >> bit) & ONE_64_BIT);
+        if (tmpRemainder >= TEN_64_BIT) {
+            tmpRemainder -= TEN_64_BIT;
+            quotient |= (ONE_64_BIT << bit);
+        }
+    }
+    remainder = static_cast<uint32_t>(tmpRemainder);
+    return quotient;
+#endif
+}
+
 namespace {
 
 constexpr std::size_t PARTS = 4; // Number of 64-bit parts in 256 bits
