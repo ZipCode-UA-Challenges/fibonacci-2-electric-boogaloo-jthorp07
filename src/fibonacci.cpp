@@ -17,16 +17,21 @@ void fibonacciRacer(std::array<uint256_t, MAX_256_BIT_FIBONACCI_INDEX + 1>& resu
 }
 
 uint256_t fibonacci(int n) {
-    static std::array<uint256_t, MAX_256_BIT_FIBONACCI_INDEX + 1> cache{0, 1};
-    static int highestComputed = 1;
 
-    if (n > highestComputed) {
-        for (int i = highestComputed + 1; i <= n; i++) {
-            cache[i] = cache[i - 1] + cache[i - 2];
-        }
-        highestComputed = n;
-    }
-    return cache[n];
+    // Naive Recursive Solution: 
+    if (n <= 1) return uint256_t(n);
+    return fibonacci(n - 1) + fibonacci(n - 2);
+
+    // // Memoization Solution: Ran in 689 Nanoseconds
+    // static std::array<uint256_t, MAX_256_BIT_FIBONACCI_INDEX + 1> cache{0, 1};
+    // static int highestComputed = 1;
+    // if (n > highestComputed) {
+    //     for (int i = highestComputed + 1; i <= n; i++) {
+    //         cache[i] = cache[i - 1] + cache[i - 2];
+    //     }
+    //     highestComputed = n;
+    // }
+    // return cache[n];
 }
 
 } // namespace fibonacci
