@@ -11,16 +11,22 @@
 namespace fibonacci {
 
 void fibonacciRacer(std::array<uint256_t, MAX_256_BIT_FIBONACCI_INDEX + 1>& results, int start, int end) {
-    /**
-     * @todo Implement the fibonacciRacer function declared in include/fibonacci.hpp.
-     */
+    for (int i = start; i <= end; i++) {
+        results[i] = fibonacci(i);
+    }
 }
 
 uint256_t fibonacci(int n) {
-    /**
-     * @todo Implement the fibonacci function declared in include/fibonacci.hpp.
-     */
-    return -1;
+    static std::array<uint256_t, MAX_256_BIT_FIBONACCI_INDEX + 1> cache{0, 1};
+    static int highestComputed = 1;
+
+    if (n > highestComputed) {
+        for (int i = highestComputed + 1; i <= n; i++) {
+            cache[i] = cache[i - 1] + cache[i - 2];
+        }
+        highestComputed = n;
+    }
+    return cache[n];
 }
 
 } // namespace fibonacci
